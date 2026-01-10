@@ -1,0 +1,12 @@
+{
+  "header": {
+    "version": null,
+    "prevHash": null,
+    "merkleRoot": null,
+    "timestamp": null,
+    "difficulty": null,
+    "nonce": null,
+    "blockHash": null
+  },
+  "body": []
+}
