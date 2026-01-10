@@ -1,0 +1,22 @@
+{
+  "metadata": {
+    "version": 1,
+    "developer": "ISTEK",
+    "github": "https://github.com/IsteksLab/DictionaryPoW",
+    "external": "https://raw.githubusercontent.com/IsteksLab/DictionaryPoW/refs/heads/main/config.json",
+    "created": 1768107447,
+    "verifyHash": "4df0798e335271b37163e3a15b8665737695fb621570983673c4009c214245c8"
+  },
+  "configurations": {
+    "lang": "en",
+    "options": ["de", "en", "es", "fr", "it", "pt-br", "ro", "zh"]
+  },
+  "blockchain": {
+    "maxWords": 50,
+    "difficulty": {
+      "hashrate": 1000,
+      "confirmationTime": 60
+    }
+  },
+  "tampered": false
+}
