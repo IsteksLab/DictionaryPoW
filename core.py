@@ -39,11 +39,6 @@ def setup():
     pass
   elif isinstace(int(maxWords), int):
     config["blockchain"]["maxWords"] = int(maxWords)
-  cpuUsage = input(colored("Set CPU Usage Rate (1-5, d for Default): ", "white", attrs=["bold"]))
-  if cpuUsage.lower() == "d":
-    pass
-  elif isinstance(int(cpuUsage), int) and int(cpuUsage) <= 5:
-    config["blockchain"]["cpuUsage"] = int(cpuUsage)
   hashrate = input(colored("Set Genesis Difficulty Hashrate (d for Default): ", "white", attrs=["bold"]))
   if hashrate.lower() == "d":
     pass
