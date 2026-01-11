@@ -3,6 +3,7 @@ from hashlib import sha256
 from pathlib import Path
 from pow import block
 
+status = None
 block.propagate()
 
 with open(f"{Path(__file__).parent.parent}/config.json", "r") as r:
@@ -64,7 +65,6 @@ def mine():
 
 def validate():
   global status
-  status = None
   version = prevHash = merkleRoot = timestamp = difficulty = nonce = blockHash = mined = False
   if wordChain[-1]["header"]["version"] == config["metadata"]["version"]:
     version = True
