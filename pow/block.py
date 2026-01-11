@@ -14,15 +14,15 @@ word = copy.deepcopy(word)
 def difficulty():
   if not os.path.exists(f"{Path(__file__).parent.parent}/data/wordChain.json"):
     diff = round(2**224 * 2**32 / (2**32 / config["blockchain"]["difficulty"]["hashrate"] * config["blockchain"]["difficulty"]["confirmationTime"]))
-    return "0x" + format(diff, f"0{((diff.bit_length() + 3) // 4)}x")
+    return format(diff, f"0{((diff.bit_length() + 3) // 4)}x")
   else:
     with open(f"{Path(__file__).parent.parent}data/wordChain.json", "r") as r:
       wordChain = json.load(r)
     diff = (int(wordChain[-1]["header"]["difficulty"], 16) * ((wordChain[-1]["header"]["timestamp"] - wordChain[-2]["header"]["timestamp"]) / config["blockchain"]["difficulty"]["confirmationTime"]))
-    return "0x" + format(diff, f"0{((diff.bit_length() + 3) // 4)}x")
+    return format(diff, f"0{((diff.bit_length() + 3) // 4)}x")
 
 def propagate():
-  block["header"]["version"] = hex(config["metadata"]["version"])
+  block["header"]["version"] = config["metadata"]["version"]
   block["header"]["prevHash"] = "0"*64
   if os.path.exists(f"{Path(__file__).parent.parent}data/wordChain.json"):
     with open(f"{Path(__file__).parent.parent}data/wordChain.json", "r") as r:
@@ -31,8 +31,8 @@ def propagate():
   block["header"]["merkleRoot"] = "0"*64
   block["header"]["timestamp"] = round(time.time())
   block["header"]["difficulty"] = difficulty()
-  block["header"]["nonce"] = hex(0)
-  static = (block["header"]["version"].to_bytes((block["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(block["header"]["prevHash"]) + bytes.fromhex(block["header"]["merkleRoot"]) + block["header"]["timestamp"].to_bytes((block["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(block["header"]["difficulty"]) + bytes.fromhex(block["header"]["nonce"]))
+  block["header"]["nonce"] = 0
+  static = (block["header"]["version"].to_bytes((block["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(block["header"]["prevHash"]) + bytes.fromhex(block["header"]["merkleRoot"]) + block["header"]["timestamp"].to_bytes((block["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(block["header"]["difficulty"]) + block["header"]["nonce"].to_bytes((block["header"]["nonce"].bit_length() + 7) // 8, "big"))
   block["header"]["blockHash"] = sha256(sha256(static).digest()).hexdigest()
 
   if block["header"]["prevHash"] == "0"*64:
