@@ -97,20 +97,3 @@ def validate():
     with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "w") as w:
       json.dump(wordChain, w, indent=4)
     status = 0
-
-def start():
-  cpuUsage = 0
-  if config["blockchain"]["cpuUsage"] > 5:
-    cpuUsage = 3
-  else:
-    cpuUsage = config["blockchain"]["cpuUsage"]
-  usage = max(1, int(os.cpu_count() * (cpuUsage / 5)))
-
-  threads = []
-  for _ in range(usage):
-    cpu = threading.Thread(target=pow)
-    cpu.daemon = True
-    cpu.start()
-    threads.append(cpu)
-  for thread in threads:
-    thread.join()
