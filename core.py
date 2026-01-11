@@ -60,7 +60,7 @@ def setup():
 def mine():
   while True:
     print(colored("[!] - Mining Initiated...", "yellow", attrs=["bold"]))
-    mining.start()
+    mining.mine()
     if mining.status == 0:
       print(colored("[!] - Block Invalid. Unsuccessful Mining", "red", attrs=["bold"]))
       time.sleep(1)
