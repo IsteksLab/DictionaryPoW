@@ -45,7 +45,7 @@ def propagate():
       wordChain = json.load(r)
     wordChain.append(block)
     with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "w") as w:
-      json.dump(temp, w, indent=4)
+      json.dump(wordChain, w, indent=4)
 
 def word():
   options = config["configurations"]["options"]
