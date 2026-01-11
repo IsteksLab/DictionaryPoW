@@ -1,6 +1,6 @@
-import json, os, threading, base58
 from hashlib import sha256
 from pathlib import Path
+import json, os, base58
 from pow import block
 
 status = None
