@@ -37,6 +37,6 @@ def verify():
           json.dump(config, w, indent=4)
         compute()
     else:
-      err = 202
+      err = 404
 
     
