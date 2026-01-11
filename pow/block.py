@@ -7,9 +7,9 @@ with open(f"{Path(__file__).parent.parent}/config.json", "r") as r:
 with open(f"{Path(__file__).parent.parent}/formats/block.json", "r") as r:
   block = json.load(r)
 with open(f"{Path(__file__).parent.parent}/formats/word.json", "r") as r:
-  word = json.load(r)
+  wrd = json.load(r)
 block = copy.deepcopy(block)
-word = copy.deepcopy(word)
+wrd = copy.deepcopy(wrd)
 
 def difficulty():
   if not os.path.exists(f"{Path(__file__).parent.parent}/data/wordChain.json"):
@@ -54,13 +54,13 @@ def word():
   if lang in options:
     with open(f"{Path(__file__).parent.parent}/dictionaries/{lang}.json", "r") as f:
         words = json.load(f)
-    word["word"] = random.choice(words)
-  word["id"] = base58.b58encode(os.urandom(16)).decode()
-  word["lang"] = config["configurations"]["lang"]
+    wrd["word"] = random.choice(words)
+  wrd["id"] = base58.b58encode(os.urandom(16)).decode()
+  wrd["lang"] = config["configurations"]["lang"]
   if lang in options:
     with open(f"{Path(__file__).parent.parent}/dictionaries/{lang}.json", "r") as f:
       words = json.load(f)
-    word["word"] = random.choice(words)
-  word["wID"] = sha256(word["id"].encode("utf-8") + word["word"].encode("utf-8") + word["lang"].encode("utf-8")).hexdigest()
+    wrd["word"] = random.choice(words)
+  wrd["wID"] = sha256(wrd["id"].encode("utf-8") + wrd["word"].encode("utf-8") + wrd["lang"].encode("utf-8")).hexdigest()
 
-  return json.dumps(word)
+  return json.dumps(wrd)
