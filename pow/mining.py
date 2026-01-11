@@ -58,6 +58,40 @@ def mine():
           with open("/data/wordChain.json", "w") as w:
             json.dump(wordChain, w, indent=4)
           break
+  validate()
+
+def validate():
+  version = prevHash = merkleRoot = timestamp = difficulty = nonce = blockHash = mined = False
+  if wordChain[-1]["header"]["version"] == hex(config["metadata"]["version"]):
+    version = True
+  if wordChain[-1]["header"]["prevHash"] == wordChain[-2]["header"]["blockHash"]:
+    prevHash = True
+
+  merkleRoot = wordChain[-1]["body"]
+  while len(merkleRoot) > 1:
+    if len(merkleRoot) % 2 == 1:
+        merkleRoot.append(merkleRoot[-1]["wID"])
+    merkles = []
+    for p in range(0, len(merkleRoot), 2):
+        merkles.append(sha256(merkleRoot[p] + merkleRoot[p+1]).digest())
+    merkleRoot = merkles
+  if wordChain[-1]["header"]["merkleRoot"] == merkleRoot[0]:
+    merkleRoot = True
+  if isinstance(wordChain[-1]["header"]["timestamp"], int) and len(wordChain[-1]["header"]["timestamp"]) >= 10:
+    timestamp = True
+  if isinstance(wordChain[-1]["header"]["difficulty"], hex):
+    difficulty = True
+  if isinstance(wordChain[-1]["header"]["nonce"], hex):
+    nonce = True
+  if int(wordChain[-1]["header"]["blockHash"], 16) <= int(wordChain[-1]["header"]["difficulty"], 16):
+    mined = True
+
+  if version and prevHash and merkleRoot and timestamp and difficulty and nonce and mined:
+    pass
+  else:
+    wordChain[-1].pop()
+    with open("/data/wordChain.json", "w") as w:
+      json.dump(wordChain, w, indent=4)
 
 def start():
   cpuUsage = 0
