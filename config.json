@@ -13,7 +13,6 @@
   },
   "blockchain": {
     "maxWords": 50,
-    "cpuUsage": 3,
     "difficulty": {
       "hashrate": 1000,
       "confirmationTime": 60
