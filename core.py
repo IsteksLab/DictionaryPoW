@@ -23,7 +23,7 @@ def setup():
   elif config["tampered"] == False:
     print(colored("Variant: Intact", "green", attrs=["bold"]))
   elif hash.err == 404:
-    print(colored("Variant: unknown", "yellow", attrs=["bold"))
+    print(colored("Variant: unknown", "yellow", attrs=["bold"]))
   print("\n---\n")
   print(colored("""
 █▀▀ █▀█ █▄░█ █▀▀ █ █▀▀ █░█ █▀█ █▀▀
@@ -88,7 +88,7 @@ else:
   elif config["tampered"] == False:
     print(colored("Variant: Intact", "green", attrs=["bold"]))
   elif hash.err == 404:
-    print(colored("Variant: unknown", "yellow", attrs=["bold"))
+    print(colored("Variant: unknown", "yellow", attrs=["bold"]))
   time.sleep(2)
   clear()
   mine()
