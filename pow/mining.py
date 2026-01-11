@@ -61,6 +61,8 @@ def mine():
   validate()
 
 def validate():
+  global status
+  status = None
   version = prevHash = merkleRoot = timestamp = difficulty = nonce = blockHash = mined = False
   if wordChain[-1]["header"]["version"] == hex(config["metadata"]["version"]):
     version = True
@@ -87,11 +89,12 @@ def validate():
     mined = True
 
   if version and prevHash and merkleRoot and timestamp and difficulty and nonce and mined:
-    pass
+    status = 1
   else:
     wordChain[-1].pop()
     with open("/data/wordChain.json", "w") as w:
       json.dump(wordChain, w, indent=4)
+    status = 0
 
 def start():
   cpuUsage = 0
