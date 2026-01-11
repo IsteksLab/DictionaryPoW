@@ -1,6 +1,7 @@
 from hashlib import sha256
 import json, requests, os
 
+err = None
 with open("config.json", "r") as r:
   config = json.load(r)
 
