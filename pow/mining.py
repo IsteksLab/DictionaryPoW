@@ -9,6 +9,7 @@ with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "r") as r:
   wordChain = json.load(r)
 
 def mine():
+  block.propagate()
   wordChain[-1]["body"] = [block.word() for _ in range(config["blockchain"]["maxWords"])]
   merkleRoot = wordChain[-1]["body"]
   while len(merkleRoot) > 1:
