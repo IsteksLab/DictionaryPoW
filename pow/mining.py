@@ -24,11 +24,11 @@ def mine():
     merkleRoot = merkles
   merkleRoot = merkleRoot[0]
 
-  static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + wordChain[-1]["header"]["difficulty"].to_bytes((wordChain[-1]["header"]["difficulty"].bit_length() + 7) // 8, "big") + wordChain[-1]["header"]["nonce"].to_bytes((wordChain[-1]["header"]["nonce"].bit_length() + 7) // 8, "big"))
-  blockHash = sha256(sha256(static).digest()).hexdigest()
-  while wordChain[-1]["header"]["nonce"] <= (2**32) - 1:
+  while nonce <= (2**32) - 1:
+    static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + wordChain[-1]["header"]["difficulty"].to_bytes((wordChain[-1]["header"]["difficulty"].bit_length() + 7) // 8, "big") + wordChain[-1]["header"]["nonce"].to_bytes((wordChain[-1]["header"]["nonce"].bit_length() + 7) // 8, "big"))
+    blockHash = sha256(sha256(static).digest()).hexdigest()
     if int(blockHash, 16) <= wordChain[-1]["header"]["difficulty"]:
-      wordChain[-1]["header"]["blockHash"] = blockhash
+      wordChain[-1]["header"]["blockHash"] = blockHash
       wordChain[-1]["header"]["merkleRoot"] = merkleRoot.hex()
       with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "w") as w:
         json.dump(wordChain, w, indent=4)
@@ -36,8 +36,9 @@ def mine():
     else:
       nonce += 1
       static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + wordChain[-1]["header"]["difficulty"].to_bytes((wordChain[-1]["header"]["difficulty"].bit_length() + 7) // 8, "big") + nonce.to_bytes((nonce.bit_length() + 7) // 8, "big"))
-      if int(sha256(sha256(static).digest()).hexdigest(), 16) <= wordChain[-1]["header"]["difficulty"]:
-        wordChain[-1]["header"]["blockHash"] = sha256(sha256(static).digest()).hexdigest()
+      blockHash = sha256(sha256(static).digest()).hexdigest()
+      if int(blockHash, 16) <= wordChain[-1]["header"]["difficulty"]:
+        wordChain[-1]["header"]["blockHash"] = blockHash
         wordChain[-1]["header"]["merkleRoot"] = merkleRoot.hex()
         wordChain[-1]["header"]["nonce"] = nonce
         with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "w") as w:
