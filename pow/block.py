@@ -49,6 +49,7 @@ def propagate():
       json.dump(wordChain, w, indent=4)
 
 def word():
+  lang = config["configurations"]["lang"]
   options = config["configurations"]["options"]
   if lang in options:
     with open(f"{Path(__file__).parent.parent}/dictionaries/{lang}.json", "r") as f:
@@ -56,8 +57,6 @@ def word():
     word["word"] = random.choice(words)
   word["id"] = base58.b58encode(os.urandom(16)).decode()
   word["lang"] = config["configurations"]["lang"]
-  lang = config["configurations"]["lang"]
-  options = config["configurations"]["options"]
   if lang in options:
     with open(f"{Path(__file__).parent.parent}/dictionaries/{lang}.json", "r") as f:
       words = json.load(f)
