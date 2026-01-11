@@ -16,7 +16,7 @@ def difficulty():
     diff = round(2**224 * 2**32 / (2**32 / config["blockchain"]["difficulty"]["hashrate"] * config["blockchain"]["difficulty"]["confirmationTime"]))
     return "0x" + format(diff, f"0{((diff.bit_length() + 3) // 4)}x")
   else:
-    with open("f"{Path(__file__).parent}data/wordChain.json", "r") as r:
+    with open(f"{Path(__file__).parent}data/wordChain.json", "r") as r:
       wordChain = json.load(r)
     diff = (int(wordChain[-1]["header"]["difficulty"], 16) * ((wordChain[-1]["header"]["timestamp"] - wordChain[-2]["header"]["timestamp"]) / config["blockchain"]["difficulty"]["confirmationTime"]))
     return "0x" + format(diff, f"0{((diff.bit_length() + 3) // 4)}x")
