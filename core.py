@@ -1,5 +1,5 @@
+import time, os, json, hash, shutil
 from termcolor import colored
-import time, os, json, hash
 from pow import mining
 
 with open("config.json", "r") as r:
@@ -73,6 +73,10 @@ def mine():
 if config["time"] == 0:
   setup()
 else:
+  with open("data/wordChain.json", "r") as r:
+    wordChain = json.load(r)
+  if len(wordChain) == 1:
+    shutil.rmtree("data/wordChain.json")
   print(colored("""
 ██████╗░██╗░█████╗░████████╗██╗░█████╗░███╗░░██╗░█████╗░██████╗░██╗░░░██╗██████╗░░█████╗░░██╗░░░░░░░██╗
 ██╔══██╗██║██╔══██╗╚══██╔══╝██║██╔══██╗████╗░██║██╔══██╗██╔══██╗╚██╗░██╔╝██╔══██╗██╔══██╗░██║░░██╗░░██║
