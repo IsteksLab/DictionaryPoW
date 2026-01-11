@@ -41,7 +41,7 @@ def mine():
         break
       if int(nonce, 16) > (2**32) - 1:
         wordChain[-1]["body"][-1]["id"] = base58.b58encode(os.urandom(16)).decode()
-        wordChain[-1]["body"][-1]["wID"] =  = sha256(wordChain[-1]["body"][-1]["id"].encode("utf-8") + wordChain[-1]["body"][-1]["word"].encode("utf-8") + wordChain[-1]["body"][-1]["lang"].encode("utf-8")).hexdigest()
+        wordChain[-1]["body"][-1]["wID"] = sha256(wordChain[-1]["body"][-1]["id"].encode("utf-8") + wordChain[-1]["body"][-1]["word"].encode("utf-8") + wordChain[-1]["body"][-1]["lang"].encode("utf-8")).hexdigest()
         merkleRoot = wordChain[-1]["body"]
         while len(merkleRoot) > 1:
           if len(merkleRoot) % 2 == 1:
