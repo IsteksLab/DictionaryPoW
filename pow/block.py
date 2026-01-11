@@ -31,7 +31,7 @@ def propagate():
   block["header"]["timestamp"] = round(time.time())
   block["header"]["difficulty"] = difficulty()
   block["header"]["nonce"] = 0
-  static = (block["header"]["version"].to_bytes((block["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(block["header"]["prevHash"]) + bytes.fromhex(block["header"]["merkleRoot"]) + block["header"]["timestamp"].to_bytes((block["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(block["header"]["difficulty"]) + block["header"]["nonce"].to_bytes((block["header"]["nonce"].bit_length() + 7) // 8, "big"))
+  static = (block["header"]["version"].to_bytes((block["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(block["header"]["prevHash"]) + bytes.fromhex(block["header"]["merkleRoot"]) + block["header"]["timestamp"].to_bytes((block["header"]["timestamp"].bit_length() + 7) // 8, "big") + block["header"]["difficulty"].bit_length() + 7) // 8, "big") + block["header"]["nonce"].to_bytes((block["header"]["nonce"].bit_length() + 7) // 8, "big"))
   block["header"]["blockHash"] = sha256(sha256(static).digest()).hexdigest()
 
   if block["header"]["prevHash"] == "0"*64:
