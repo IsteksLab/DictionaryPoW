@@ -22,6 +22,7 @@ def difficulty():
     return format(diff, f"0{((diff.bit_length() + 3) // 4)}x")
 
 def propagate():
+  os.makedirs(f"{Path(__file__).parent.parent}/data", exist_ok=True)
   block["header"]["version"] = config["metadata"]["version"]
   block["header"]["prevHash"] = "0"*64
   if os.path.exists(f"{Path(__file__).parent.parent}/data/wordChain.json"):
