@@ -1,10 +1,11 @@
 import json, os, threading, base58
 from hashlib import sha256
+from pathlib import Path
 from pow import block
 
-with open("./config.json", "r") as r:
+with open(f"{Path(__file__).parent}/config.json", "r") as r:
   config = json.load(r)
-with open("/data/wordChain.json", "r") as r:
+with open(f"{Path(__file__).parent}/data/wordChain.json", "r") as r:
   wordChain = json.load(r)
 
 def mine():
@@ -25,7 +26,7 @@ def mine():
     if int(blockHash, 16) <= int(wordChain[-1]["header"]["difficulty"], 16):
       wordChain[-1]["header"]["blockHash"] = blockhash
       wordChain[-1]["header"]["merkleRoot"] = merkleRoot.hex()
-      with open("/data/wordChain.json", "w") as w:
+      with open(f"{Path(__file__).parent}/data/wordChain.json", "w") as w:
         json.dump(wordChain, w, indent=4)
       break
     else:
@@ -36,7 +37,7 @@ def mine():
         wordChain[-1]["header"]["blockHash"] = sha256(sha256(static).digest()).hexdigest()
         wordChain[-1]["header"]["merkleRoot"] = merkleRoot.hex()
         wordChain[-1]["header"]["nonce"] = nonce
-        with open("/data/wordChain.json", "w") as w:
+        with open(f"{Path(__file__).parent}/data/wordChain.json", "w") as w:
           json.dump(wordChain, w, indent=4)
         break
       if int(nonce, 16) > (2**32) - 1:
@@ -55,7 +56,7 @@ def mine():
         if int(sha256(sha256(static).digest()).hexdigest(), 16) <= int(wordChain[-1]["header"]["difficulty"], 16):
           wordChain[-1]["header"]["blockHash"] = sha256(sha256(static).digest()).hexdigest()
           wordChain[-1]["header"]["merkleRoot"] = merkleRoot.hex()
-          with open("/data/wordChain.json", "w") as w:
+          with open(f"{Path(__file__).parent}/data/wordChain.json", "w") as w:
             json.dump(wordChain, w, indent=4)
           break
   validate()
@@ -92,7 +93,7 @@ def validate():
     status = 1
   else:
     wordChain[-1].pop()
-    with open("/data/wordChain.json", "w") as w:
+    with open(f"{Path(__file__).parent}/data/wordChain.json", "w") as w:
       json.dump(wordChain, w, indent=4)
     status = 0
 
