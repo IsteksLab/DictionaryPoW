@@ -55,6 +55,9 @@ def setup():
   elif isinstance(int(confirmationTime), int):
     config["blockchain"]["difficulty"]["confirmationTime"] = int(confirmationTime)
   print(colored("\nConfiguration Complete!", "green", attrs=["bold"]))
+  config["time"] = round(time.time())
+  with open("config.json", "w") as w:
+    json.dump(config, w, indent=4)
   time.sleep(2)
   clear()
   mine()
