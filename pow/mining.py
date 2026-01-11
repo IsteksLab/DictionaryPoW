@@ -22,7 +22,7 @@ def mine():
     merkleRoot = merkles
   merkleRoot = merkleRoot[0]
 
-  static = (bytes.fromhex(wordChain[-1]["header"]["version"]) + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["difficulty"]) + bytes.fromhex(wordChain[-1]["header"]["nonce"]))
+  static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["difficulty"]) + wordChain[-1]["header"]["nonce"].to_bytes((wordChain[-1]["header"]["nonce"].bit_length() + 7) // 8, "big"))
   blockHash = sha256(sha256(static).digest()).hexdigest()
   while int(wordChain[-1]["header"]["nonce"], 16) <= (2**32) - 1:
     if int(blockHash, 16) <= int(wordChain[-1]["header"]["difficulty"], 16):
@@ -33,8 +33,7 @@ def mine():
       break
     else:
       nonce += 1
-      nonce = hex(nonce)
-      static = (bytes.fromhex(wordChain[-1]["header"]["version"]) + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["difficulty"]) + bytes.fromhex(nonce))
+      static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["difficulty"]) + bytes.fromhex(nonce))
       if sha256(sha256(static).digest()).hexdigest() <= int(wordChain[-1]["header"]["difficulty"], 16):
         wordChain[-1]["header"]["blockHash"] = sha256(sha256(static).digest()).hexdigest()
         wordChain[-1]["header"]["merkleRoot"] = merkleRoot.hex()
@@ -54,7 +53,7 @@ def mine():
             merkles.append(sha256(merkleRoot[p] + merkleRoot[p+1]).digest())
           merkleRoot = merkles
         merkleRoot = merkleRoot[0]
-        static = (bytes.fromhex(wordChain[-1]["header"]["version"]) + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["difficulty"]) + bytes.fromhex(nonce))
+        static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["difficulty"]) + bytes.fromhex(nonce))
         if int(sha256(sha256(static).digest()).hexdigest(), 16) <= int(wordChain[-1]["header"]["difficulty"], 16):
           wordChain[-1]["header"]["blockHash"] = sha256(sha256(static).digest()).hexdigest()
           wordChain[-1]["header"]["merkleRoot"] = merkleRoot.hex()
@@ -67,7 +66,7 @@ def validate():
   global status
   status = None
   version = prevHash = merkleRoot = timestamp = difficulty = nonce = blockHash = mined = False
-  if wordChain[-1]["header"]["version"] == hex(config["metadata"]["version"]):
+  if wordChain[-1]["header"]["version"] == config["metadata"]["version"]:
     version = True
   if wordChain[-1]["header"]["prevHash"] == wordChain[-2]["header"]["blockHash"]:
     prevHash = True
@@ -86,7 +85,7 @@ def validate():
     timestamp = True
   if isinstance(wordChain[-1]["header"]["difficulty"], hex):
     difficulty = True
-  if isinstance(wordChain[-1]["header"]["nonce"], hex):
+  if wordChain[-1]["header"]["nonce"] <= (2**32) - 1:
     nonce = True
   if int(wordChain[-1]["header"]["blockHash"], 16) <= int(wordChain[-1]["header"]["difficulty"], 16):
     mined = True
