@@ -63,4 +63,4 @@ def word():
     wrd["word"] = random.choice(words)
   wrd["wID"] = sha256(wrd["id"].encode("utf-8") + wrd["word"].encode("utf-8") + wrd["lang"].encode("utf-8")).hexdigest()
 
-  return json.dumps(wrd)
+  return json.loads(wrd)
