@@ -12,21 +12,22 @@ with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "r") as r:
   wordChain = json.load(r)
 
 def mine():
+  nonce = 0
   wordChain[-1]["body"] = [block.word() for _ in range(config["blockchain"]["maxWords"])]
-  merkleRoot = wordChain[-1]["body"]
+  merkleRoot = [bytes.fromhex(w["wID"]) for w in wordChain[-1]["body"]]
   while len(merkleRoot) > 1:
     if len(merkleRoot) % 2 == 1:
-        merkleRoot.append(merkleRoot[-1]["wID"])
+        merkleRoot.append(merkleRoot[-1])
     merkles = []
     for p in range(0, len(merkleRoot), 2):
         merkles.append(sha256(merkleRoot[p] + merkleRoot[p+1]).digest())
     merkleRoot = merkles
   merkleRoot = merkleRoot[0]
 
-  static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["difficulty"]) + wordChain[-1]["header"]["nonce"].to_bytes((wordChain[-1]["header"]["nonce"].bit_length() + 7) // 8, "big"))
+  static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + wordChain[-1]["header"]["difficulty"].to_bytes((wordChain[-1]["header"]["difficulty"].bit_length() + 7) // 8, "big") + wordChain[-1]["header"]["nonce"].to_bytes((wordChain[-1]["header"]["nonce"].bit_length() + 7) // 8, "big"))
   blockHash = sha256(sha256(static).digest()).hexdigest()
-  while int(wordChain[-1]["header"]["nonce"], 16) <= (2**32) - 1:
-    if int(blockHash, 16) <= int(wordChain[-1]["header"]["difficulty"], 16):
+  while wordChain[-1]["header"]["nonce"] <= (2**32) - 1:
+    if int(blockHash, 16) <= wordChain[-1]["header"]["difficulty"]:
       wordChain[-1]["header"]["blockHash"] = blockhash
       wordChain[-1]["header"]["merkleRoot"] = merkleRoot.hex()
       with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "w") as w:
@@ -34,28 +35,28 @@ def mine():
       break
     else:
       nonce += 1
-      static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["difficulty"]) + bytes.fromhex(nonce))
-      if sha256(sha256(static).digest()).hexdigest() <= int(wordChain[-1]["header"]["difficulty"], 16):
+      static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + wordChain[-1]["header"]["difficulty"].to_bytes((wordChain[-1]["header"]["difficulty"].bit_length() + 7) // 8, "big") + nonce.to_bytes((nonce.bit_length() + 7) // 8, "big"))
+      if int(sha256(sha256(static).digest()).hexdigest(), 16) <= wordChain[-1]["header"]["difficulty"]:
         wordChain[-1]["header"]["blockHash"] = sha256(sha256(static).digest()).hexdigest()
         wordChain[-1]["header"]["merkleRoot"] = merkleRoot.hex()
         wordChain[-1]["header"]["nonce"] = nonce
         with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "w") as w:
           json.dump(wordChain, w, indent=4)
         break
-      if int(nonce, 16) > (2**32) - 1:
+      if nonce > (2**32) - 1:
         wordChain[-1]["body"][-1]["id"] = base58.b58encode(os.urandom(16)).decode()
         wordChain[-1]["body"][-1]["wID"] = sha256(wordChain[-1]["body"][-1]["id"].encode("utf-8") + wordChain[-1]["body"][-1]["word"].encode("utf-8") + wordChain[-1]["body"][-1]["lang"].encode("utf-8")).hexdigest()
-        merkleRoot = wordChain[-1]["body"]
+        merkleRoot = [bytes.fromhex(w["wID"]) for w in wordChain[-1]["body"]]
         while len(merkleRoot) > 1:
           if len(merkleRoot) % 2 == 1:
-            merkleRoot.append(merkleRoot[-1]["wID"])
+            merkleRoot.append(merkleRoot[-1])
           merkles = []
           for p in range(0, len(merkleRoot), 2):
             merkles.append(sha256(merkleRoot[p] + merkleRoot[p+1]).digest())
           merkleRoot = merkles
         merkleRoot = merkleRoot[0]
-        static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["difficulty"]) + bytes.fromhex(nonce))
-        if int(sha256(sha256(static).digest()).hexdigest(), 16) <= int(wordChain[-1]["header"]["difficulty"], 16):
+        static = (wordChain[-1]["header"]["version"].to_bytes((wordChain[-1]["header"]["version"].bit_length() + 7) // 8, "big") + bytes.fromhex(wordChain[-1]["header"]["prevHash"]) + merkleRoot + wordChain[-1]["header"]["timestamp"].to_bytes((wordChain[-1]["header"]["timestamp"].bit_length() + 7) // 8, "big") + wordChain[-1]["header"]["difficulty"].to_bytes((wordChain[-1]["header"]["difficulty"].bit_length() + 7) // 8, "big") + nonce.to_bytes((nonce.bit_length() + 7) // 8, "big"))
+        if int(sha256(sha256(static).digest()).hexdigest(), 16) <= wordChain[-1]["header"]["difficulty"]:
           wordChain[-1]["header"]["blockHash"] = sha256(sha256(static).digest()).hexdigest()
           wordChain[-1]["header"]["merkleRoot"] = merkleRoot.hex()
           with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "w") as w:
@@ -71,10 +72,10 @@ def validate():
   if wordChain[-1]["header"]["prevHash"] == wordChain[-2]["header"]["blockHash"]:
     prevHash = True
 
-  merkleRoot = wordChain[-1]["body"]
+  merkleRoot = [bytes.fromhex(w["wID"]) for w in wordChain[-1]["body"]]
   while len(merkleRoot) > 1:
     if len(merkleRoot) % 2 == 1:
-        merkleRoot.append(merkleRoot[-1]["wID"])
+        merkleRoot.append(merkleRoot[-1])
     merkles = []
     for p in range(0, len(merkleRoot), 2):
         merkles.append(sha256(merkleRoot[p] + merkleRoot[p+1]).digest())
@@ -87,7 +88,7 @@ def validate():
     difficulty = True
   if wordChain[-1]["header"]["nonce"] <= (2**32) - 1:
     nonce = True
-  if int(wordChain[-1]["header"]["blockHash"], 16) <= int(wordChain[-1]["header"]["difficulty"], 16):
+  if int(wordChain[-1]["header"]["blockHash"], 16) <= wordChain[-1]["header"]["difficulty"]:
     mined = True
 
   if version and prevHash and merkleRoot and timestamp and difficulty and nonce and mined:
