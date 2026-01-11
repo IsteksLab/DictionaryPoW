@@ -13,13 +13,11 @@ wrd = copy.deepcopy(wrd)
 
 def difficulty():
   if not os.path.exists(f"{Path(__file__).parent.parent}/data/wordChain.json"):
-    diff = round(2**224 * 2**32 / (2**32 / config["blockchain"]["difficulty"]["hashrate"] * config["blockchain"]["difficulty"]["confirmationTime"]))
-    return format(diff, f"0{((diff.bit_length() + 3) // 4)}x")
+    return round(2**224 * 2**32 / (2**32 / config["blockchain"]["difficulty"]["hashrate"] * config["blockchain"]["difficulty"]["confirmationTime"]))
   else:
     with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "r") as r:
       wordChain = json.load(r)
-    diff = (int(wordChain[-1]["header"]["difficulty"], 16) * ((wordChain[-1]["header"]["timestamp"] - wordChain[-2]["header"]["timestamp"]) / config["blockchain"]["difficulty"]["confirmationTime"]))
-    return format(diff, f"0{((diff.bit_length() + 3) // 4)}x")
+    return (int(wordChain[-1]["header"]["difficulty"], 16) * ((wordChain[-1]["header"]["timestamp"] - wordChain[-2]["header"]["timestamp"]) / config["blockchain"]["difficulty"]["confirmationTime"]))
 
 def propagate():
   os.makedirs(f"{Path(__file__).parent.parent}/data", exist_ok=True)
