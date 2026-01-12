@@ -13,7 +13,7 @@ wrd = copy.deepcopy(wrd)
 
 def difficulty():
   if not os.path.exists(f"{Path(__file__).parent.parent}/data/wordChain.json"):
-    return round(2**256 / (2**32 / config["blockchain"]["difficulty"]["hashrate"] * config["blockchain"]["difficulty"]["confirmationTime"]))
+    return round(2**256 / (config["blockchain"]["difficulty"]["hashrate"] * config["blockchain"]["difficulty"]["confirmationTime"]))
   else:
     with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "r") as r:
       wordChain = json.load(r)
