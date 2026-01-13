@@ -17,7 +17,10 @@ def difficulty():
   else:
     with open(f"{Path(__file__).parent.parent}/data/wordChain.json", "r") as r:
       wordChain = json.load(r)
-    return (int(wordChain[-1]["header"]["difficulty"], 16) * ((wordChain[-1]["header"]["timestamp"] - wordChain[-2]["header"]["timestamp"]) / config["blockchain"]["difficulty"]["confirmationTime"]))
+    if len(wordChain) > 1:
+      return (int(wordChain[-1]["header"]["difficulty"], 16) * ((wordChain[-1]["header"]["timestamp"] - wordChain[-2]["header"]["timestamp"]) / config["blockchain"]["difficulty"]["confirmationTime"]))
+    else:
+      return round(2**256 / (config["blockchain"]["difficulty"]["hashrate"] * config["blockchain"]["difficulty"]["confirmationTime"]))
 
 def propagate():
   os.makedirs(f"{Path(__file__).parent.parent}/data", exist_ok=True)
